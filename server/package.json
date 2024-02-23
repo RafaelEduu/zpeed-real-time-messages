@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "prisma": "^5.8.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.0",
+    "@fastify/websocket": "^8.3.1",
+    "@prisma/client": "^5.8.0",
+    "fastify": "^4.25.2",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4",
+    "zod": "^3.22.4"
+  }
+}
