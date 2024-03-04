@@ -1,6 +1,5 @@
 import { api } from "@/app/lib/api";
 import getUser from "@/app/teste/useUser";
-
 const createFriend = async (id: FormDataEntryValue | null) => {
   const user = await getUser();
 

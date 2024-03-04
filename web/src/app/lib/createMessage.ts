@@ -1,5 +1,6 @@
-import getUser from "../teste/useUser";
+import getUser from "@/app/teste/useUser";
 import { api } from "./api";
+import socket from "./websocket";
 
 interface FriendProps {
   friendId: string;
@@ -12,14 +13,18 @@ const createMessage = async (
   const user = await getUser();
   const friendsId = friendId;
   const userId = user.id;
-  
+  const receiver = await api.get(
+    `receiverUserId/${userId}/friend/${friendsId}`
+  );
+  const receiverId = receiver.data.receiverId[0].id;
+
   try {
-    await api.post("/message", {
+    socket.emit("send-msg", {
       content,
       friendsId,
       userId,
+      receiverId,
     });
-
   } catch (error) {
     console.log(error);
   }

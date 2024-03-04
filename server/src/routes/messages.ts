@@ -1,5 +1,4 @@
 import { FastifyInstance } from "fastify";
-import { io } from "socket.io-client";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 
@@ -54,24 +53,10 @@ export async function messagesRoute(app: FastifyInstance) {
     });
 
     const { content, friendsId, userId } = paramsSchema.parse(request.body);
-
-    const receiverIdData = await prisma.friends.findUnique({
-      where: {
-        id: friendsId,
-      },
-
-      include: {
-       user: {
-        where: {
-          id: {
-            not: userId
-          }
-        }
-       }
-      },
-    });
-
-    const receiverId = receiverIdData?.user
+    
+    if(content.length === 0) {
+      return
+    }
 
     const message = prisma.message.create({
       data: {
@@ -81,19 +66,35 @@ export async function messagesRoute(app: FastifyInstance) {
       },
     });
 
-    const createdAt = (await message).createdAt;
-
-    const socket = io("ws://localhost:3333");
-    (await message)
-      ? socket.emit("send-msg", {
-          content,
-          friendsId,
-          userId,
-          createdAt,
-          receiverId,
-        })
-      : null;
-
     return message;
   });
+
+  app.get('/receiverUserId/:currentUser/friend/:friendId', async (request) => {
+    const paramsSchema = z.object({
+      currentUser: z.string().uuid(),
+      friendId: z.string().uuid(),
+    });
+  
+    const { currentUser, friendId } = paramsSchema.parse(request.params);
+
+    const receiverIdData = await prisma.friends.findUnique({
+      where: {
+        id: friendId,
+      },
+
+      include: {
+       user: {
+        where: {
+          id: {
+            not: currentUser
+          }
+        }
+       }
+      },
+    });
+
+    const receiverId = receiverIdData?.user
+
+    return {receiverId}
+  }) 
 }

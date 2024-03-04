@@ -27,7 +27,7 @@ export default function Usuario(props: any) {
   useEffect(() => {
     const teste = async () => {
       const user = await getUser();
-      socket.emit("add-user", user?.id);
+      socket.emit("add-user", user?.id,  user?.accessToken );
     };
 
     teste();
@@ -44,7 +44,6 @@ export default function Usuario(props: any) {
   const getFriendId = async (friendId: string) => {
     const id = friendId;
     const { getFriendsId } = await HandleFriendId(id);
-    console.log(getFriendsId);
 
     router.push(`/amizades/${getFriendsId[0].id}`);
   };
